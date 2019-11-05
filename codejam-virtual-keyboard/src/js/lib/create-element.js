@@ -23,7 +23,7 @@ module.exports = function createElement(tagName, className, attrs) {
         throw new Error('Unable to proccess non promitive value.');
       }
 
-      node[attrName] = value;
+      node.setAttribute(attrName, value);
     });
   }
 
