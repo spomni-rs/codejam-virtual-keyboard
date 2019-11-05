@@ -12,12 +12,18 @@
 // /mocks
 
 $keyboard-layer-color: silver;
+$keyboard-font-color: black;
 $keyboard-key-color: white;
 $keyboard-pressed-key-color: lightgreen;;
+$keyboard-key-symbol-color: darkblue;
 $keyboard-key-border-light: gray;
 $keyboard-key-border-dark: black;
 
 .keyboard {
+  
+  font-family: "Arial", "Helvetica", sans-serif;
+  font-weight: bold;
+  color: $keyboard-font-color;
 
   background-color: $keyboard-layer-color;
 
@@ -26,9 +32,11 @@ $keyboard-key-border-dark: black;
   }
   
   &__key {
-    display: inline-block;
     box-sizing: border-box;
     border: 2px solid;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     
     border-radius: 4px;
     border-color: 
@@ -38,6 +46,10 @@ $keyboard-key-border-dark: black;
       $keyboard-key-border-light;
 
     background-color: $keyboard-key-color;
+
+    &[data-symbol] {
+      color: $keyboard-key-symbol-color;
+    }
     
     &:active, &.active {
       border-color:

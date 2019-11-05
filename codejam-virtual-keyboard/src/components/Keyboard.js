@@ -4,6 +4,62 @@ const createElement = require('../js/lib/create-element');
 const elementResizeEvent = require('element-resize-event');
 const layouts = require('./keyboard-layouts');
 
+const symbolKeyCodes = [
+  'Backquote',
+  'Digit1',
+  'Digit2',
+  'Digit3',
+  'Digit4',
+  'Digit5',
+  'Digit6',
+  'Digit7',
+  'Digit8',
+  'Digit9',
+  'Digit0',
+  'Minus',
+  'Equal',
+  'KeyQ',
+  'KeyW',
+  'KeyE',
+  'KeyR',
+  'KeyT',
+  'KeyY',
+  'KeyU',
+  'KeyI',
+  'KeyO',
+  'KeyP',
+  'BracketLeft',
+  'BracketRight',
+  'Backslash',
+  'KeyA',
+  'KeyS',
+  'KeyD',
+  'KeyF',
+  'KeyG',
+  'KeyH',
+  'KeyJ',
+  'KeyK',
+  'KeyL',
+  'Semicolon',
+  'Quote',
+  'KeyZ',
+  'KeyX',
+  'KeyC',
+  'KeyV',
+  'KeyB',
+  'KeyN',
+  'KeyM',
+  'Comma',
+  'Period',
+  'Slash',
+];
+
+/** Check if passed key node is key of symbol to typing. 
+ *
+ * @param {HTMLElement} key
+ */
+const isSymbolKey = (key) => symbolKeyCodes.includes(key.dataset.code);
+
 /** Generate DOM structure for Keyboard component and insert it into the "node" element.
  * @param {HTMLElement} node - Keyboard component mount point.
 */
@@ -46,7 +102,10 @@ function setSizes(node) {
     keyStyle.width = `${keyHeight}px`;
     keyStyle.height = `${keyHeight}px`;
     keyStyle.margin = `0 0 ${keyGap}px ${keyGap}px`;
-    keyStyle.fontSize = `${keyHeight / 3.5}px`;
+
+    keyStyle.fontSize = isSymbolKey(currKey)
+      ? `${keyHeight / 2}px`
+      : `${keyHeight / 3.5}px`;
     
     switch (code) {
       case 'F1':
@@ -103,16 +162,55 @@ function setSizes(node) {
     }
   });
 }
- 
+
+/* Set keyboard layout and print its symbols on the keys.
+ *
+ * @param {object} - the keyboard instance state
+ * @param {HTMLElement} state.node - Keyboard component mount point.
+ * @param {oolean} isShifted - Contains true if should use the layout for the case when Shift key is pressed.
+ */
+const setLayout = (state) => {
+
+  const {node, isShifted, layoutName} = state;
+
+  if (!layouts[layoutName]) {
+    throw new Error(`Incorrect layout name "${layoutName}."`)
+  }
+  
+  const newLayout = isShifted 
+    ? layouts[layoutName][1]
+    : layouts[layoutName][0];
+   
+  layouts.codes.forEach((lineStr, lineNumber) => {
+    lineStr.split(' ').forEach((code, keyNumber) => {
+      const key = node.querySelector(`[data-code=${code}]`);
+      const value = newLayout[lineNumber].split(' ')[keyNumber];
+      
+      key.innerHTML = value;
+      if (isSymbolKey(key)) key.setAttribute('data-symbol', value);
+    });
+  });
+}
+
 function Keyboard(opts) {
   const {node} = opts;
   
   createKeyboardDOM(node);
   setSizes(node);
   
+  let state = {
+    node,
+    isShifted: false,
+    layoutName: 'en-us'
+  };
+
+  setLayout(state);
+  
   /* Dzmitry, I remember your desire to write like this:
   *    elementResizeEvent(node, setSizes.bind(null, node));
-  *  But I think the way with the arrow function is more readable.
+  *
+  *  But I think the way with the arrow function is more 
+  *    readable in this case.
   */
   elementResizeEvent(node, () => setSizes(node));
 }
