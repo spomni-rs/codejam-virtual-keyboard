@@ -1,0 +1,52 @@
+// mocks
+
+.keyboard {
+
+  &__line {
+  }
+  
+  &__key {
+  }
+}
+
+// /mocks
+
+$keyboard-layer-color: silver;
+$keyboard-key-color: white;
+$keyboard-pressed-key-color: lightgreen;;
+$keyboard-key-border-light: gray;
+$keyboard-key-border-dark: black;
+
+.keyboard {
+
+  background-color: $keyboard-layer-color;
+
+  &__line {
+    font-size: 0;
+  }
+  
+  &__key {
+    display: inline-block;
+    box-sizing: border-box;
+    border: 2px solid;
+    
+    border-radius: 4px;
+    border-color: 
+      $keyboard-key-border-light
+      $keyboard-key-border-dark
+      $keyboard-key-border-dark
+      $keyboard-key-border-light;
+
+    background-color: $keyboard-key-color;
+    
+    &:active, &.active {
+      border-color:
+        $keyboard-key-border-dark
+        $keyboard-key-border-light
+        $keyboard-key-border-light
+        $keyboard-key-border-dark;
+        
+      background-color: $keyboard-pressed-key-color;
+    }
+  }
+}
