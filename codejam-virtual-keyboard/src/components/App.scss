@@ -1,0 +1,22 @@
+$chrome-toolbar-height: 58px;
+$app-padding: 3vw;
+$app-padding-top: calc(#{$app-padding} + #{$chrome-toolbar-height});
+
+
+.app {
+
+  max-width: 1200px;
+  height: calc(100vh - 2 * #{$app-padding} - #{$chrome-toolbar-height});
+  margin: 0 auto;
+  padding: $app-padding;
+  padding-top: $app-padding-top;
+
+  display: grid;
+  grid-template: 1fr auto / 1fr;
+
+  &__input {
+  }
+
+  &__keyboard {
+  }
+}
