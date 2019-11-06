@@ -39,8 +39,13 @@ function App(opts) {
 
   const keyboard = Keyboard({
     node: keyboardContainer.appendChild(createElement('div')),
-    input, // call the method "setInput" to change the input being processed
+    input,
   });
+
+  const { keydown, keyup } = keyboard;
+
+  document.addEventListener('keydown', (event) => keydown(event.code));
+  document.addEventListener('keyup', (event) => keyup(event.code));
 }
 
 module.exports = App;

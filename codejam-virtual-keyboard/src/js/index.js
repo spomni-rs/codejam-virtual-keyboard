@@ -5,3 +5,5 @@ const createElement = require('./lib/create-element');
 
 const appMountPoint = document.body.appendChild(createElement('div'));
 App({ node: appMountPoint });
+
+// TODO: Refactor components to make they as classes

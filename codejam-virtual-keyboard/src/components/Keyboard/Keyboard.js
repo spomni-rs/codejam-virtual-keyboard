@@ -142,11 +142,36 @@ const setLayout = ({ node, isShiftPressed, layoutName }) => {
   });
 };
 
+/** Set the “active” class of the key node
+ * whose code is equal to the “code” property.
+ *
+ * @param {object} - the keyboard instance state
+ * @param {string} code - key code
+ */
+const keydown = ({ node }, code) => {
+  const key = node.querySelector(`[data-code=${code}]`);
+
+  if (key && !key.classList.contains('active')) {
+    key.classList.add('active');
+  }
+};
+
+/** Remove the “active” class of the key node
+ * whose code is equal to the “code” property.
+ *
+ * @param {object} - the keyboard instance state
+ * @param {string} code - key code
+ */
+const keyup = ({ node }, code) => {
+  const key = node.querySelector(`[data-code=${code}]`);
+  if (key) key.classList.remove('active');
+};
+
 /** Create the Keyboard component and attach it to the "node" option.
  * @param {object} opts
  * @param {HTMLElement} opts.node - App mount point
  */
-function Keyboard({ node }) {
+const Keyboard = ({ node }) => {
   createKeyboardDOM(node);
   setSizes(node);
 
@@ -158,13 +183,24 @@ function Keyboard({ node }) {
 
   setLayout(state);
 
-  /* Dzmitry, I remember your desire to write like this:
-  *    elementResizeEvent(node, setSizes.bind(null, node));
-  *
-  *  But I think the way with the arrow function is more
-  *    readable in this certain case.
-  */
+  /* TO DISCUSS: arrow function versus the bind() method
+    * Dzmitry, I remember your desire to write like this:
+    *    elementResizeEvent(node, setSizes.bind(null, node));
+    *
+    *  But I think the way with the arrow function is more
+    *    readable in this certain case.
+    */
   elementResizeEvent(node, () => setSizes(node));
-}
+
+  return {
+    /* TO DISCUSS: arrow function versus the bind() method
+      * The method "keydown" and "keyup" was makes using diffrent ways
+      *   by design. Thus, we can see illustrative examples
+      *   of the discuss topic.
+      */
+    keydown: (code) => keydown(state, code),
+    keyup: keyup.bind(null, state),
+  };
+};
 
 module.exports = Keyboard;
