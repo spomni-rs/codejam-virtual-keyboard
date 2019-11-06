@@ -9,7 +9,8 @@ const Keyboard = require('./Keyboard');
     app__keyboard-container
       keyboard
         keyboard__line
-        keyboard__key
+        keyboard__key key
+          key__print
 */
 
 /** Generate DOM structure for App module and insert it into the "node" element.
@@ -44,8 +45,14 @@ function App(opts) {
 
   const { keydown, keyup } = keyboard;
 
-  document.addEventListener('keydown', (event) => keydown(event.code));
-  document.addEventListener('keyup', (event) => keyup(event.code));
+  document.addEventListener('keydown', (event) => {
+    event.preventDefault();
+    keydown(event.code);
+  });
+  document.addEventListener('keyup', (event) => {
+    event.preventDefault();
+    keyup(event.code);
+  });
 }
 
 module.exports = App;

@@ -272,6 +272,7 @@ const isKeyNode = (duck) => duck.classList.contains('keyboard__key');
 const Keyboard = ({ node, input }) => {
   const currLayoutName = sessionStorage.getItem('currLayoutName') || 'en-us';
 
+  /* Be carefull! This variable are passed to methods and may mutate! */
   let state = { // eslint-disable-line prefer-const
     node,
     input,
