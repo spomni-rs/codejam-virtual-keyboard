@@ -16,6 +16,7 @@ $keyboard-key-border-dark: black;
 
   &__line {
     font-size: 0;
+    display: flex;
   }
 
   &__key {
