@@ -120,16 +120,16 @@ const setSizes = (node) => {
  *
  * @param {object} - the keyboard instance state
  * @param {HTMLElement} state.node - Keyboard component mount point.
- * @param {boolean} isShiftPressed - What layout should use.
+ * @param {boolean} hasShiftedLayout - What layout should use.
  */
-const setLayout = ({ node, isShiftPressed, layoutName }) => {
-  if (!layouts[layoutName]) {
-    throw new Error(`Incorrect layout name "${layoutName}."`);
+const setLayout = ({ node, hasShiftedLayout, currLayoutName }) => {
+  if (!layouts[currLayoutName]) {
+    throw new Error(`Incorrect layout name "${currLayoutName}."`);
   }
 
-  const newLayout = isShiftPressed
-    ? layouts[layoutName][1]
-    : layouts[layoutName][0];
+  const newLayout = hasShiftedLayout
+    ? layouts[currLayoutName][1]
+    : layouts[currLayoutName][0];
 
   codeLayout.forEach((lineStr, lineNumber) => {
     lineStr.split(' ').forEach((code, keyNumber) => {
@@ -142,29 +142,77 @@ const setLayout = ({ node, isShiftPressed, layoutName }) => {
   });
 };
 
+/** Switch between defined keyboard layouts.
+ *
+ * @param {object} state - the keyboard instance state
+ */
+const switchLayout = (state) => {
+  const { currLayoutName, layoutNames } = state;
+
+  const currIndex = layoutNames.indexOf(currLayoutName);
+  const newIndex = (currIndex + 1) % layoutNames.length;
+
+  state.currLayoutName = layoutNames[newIndex]; // eslint-disable-line no-param-reassign
+  setLayout(state);
+};
+
+/** Check if the "Shift" key is pressed.
+ *
+ * @param {object} state - the keyboard instance state
+ * @param {HTMLElement} state.node - Keyboard component mount point.
+ *
+ * @returns {boolean}
+ */
+const isShiftPressed = ({ node }) => !!(
+  node.querySelector('.keyboard__key.active[data-code=ShiftLeft]')
+  || node.querySelector('.keyboard__key.active[data-code=ShiftRight]')
+);
+
+/** Check if the "Alt" key is pressed.
+ *
+ * @param {object} state - the keyboard instance state
+ * @param {HTMLElement} state.node - Keyboard component mount point.
+ *
+ * @returns {boolean}
+ */
+const isAltPressed = ({ node }) => !!(
+  node.querySelector('.keyboard__key.active[data-code=AltLeft]')
+  || node.querySelector('.keyboard__key.active[data-code=AltRight]')
+);
+
 /** Set the “active” class of the key node
  * whose code is equal to the “code” property.
  *
- * @param {object} - the keyboard instance state
+ * @param {object} state - the keyboard instance state
+ * @param {HTMLElement} state.node - Keyboard component mount point.
  * @param {string} code - key code
  */
 const keydown = ({ node }, code) => {
   const key = node.querySelector(`[data-code=${code}]`);
-
-  if (key && !key.classList.contains('active')) {
-    key.classList.add('active');
-  }
+  key.classList.add('active');
 };
 
 /** Remove the “active” class of the key node
  * whose code is equal to the “code” property.
+ *  Switch inpput language if "shift+alt" combination is found.
  *
- * @param {object} - the keyboard instance state
+ * @param {object} state - the keyboard instance state
+ * @param {HTMLElement} state.node - Keyboard component mount point.
  * @param {string} code - key code
  */
-const keyup = ({ node }, code) => {
+const keyup = (state, code) => {
+  const { node } = state;
+
+  const shiftAltCodes = ['ShiftLeft', 'ShiftRight', 'AltLeft', ' AltRight'];
+  if (shiftAltCodes.includes(code)
+    && isShiftPressed(state)
+    && isAltPressed(state)
+  ) {
+    switchLayout(state);
+  }
+
   const key = node.querySelector(`[data-code=${code}]`);
-  if (key) key.classList.remove('active');
+  key.classList.remove('active');
 };
 
 /** Create the Keyboard component and attach it to the "node" option.
@@ -177,8 +225,9 @@ const Keyboard = ({ node }) => {
 
   const state = {
     node,
-    isShiftPressed: false,
-    layoutName: 'en-us',
+    hasShiftedLayout: false,
+    currLayoutName: 'en-us',
+    layoutNames: Object.keys(layouts),
   };
 
   setLayout(state);
