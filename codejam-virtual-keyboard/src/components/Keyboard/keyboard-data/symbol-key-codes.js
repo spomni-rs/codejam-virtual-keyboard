@@ -12,6 +12,7 @@ const symbolKeyCodes = [
   'Digit0',
   'Minus',
   'Equal',
+  'Tab',
   'KeyQ',
   'KeyW',
   'KeyE',
@@ -46,6 +47,8 @@ const symbolKeyCodes = [
   'Comma',
   'Period',
   'Slash',
+  'Enter',
+  'Space',
 ];
 
 module.exports = symbolKeyCodes;

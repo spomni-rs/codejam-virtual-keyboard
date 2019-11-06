@@ -137,8 +137,16 @@ const setLayout = ({ node, hasShiftedLayout, currLayoutName }) => {
       const key = node.querySelector(`[data-code=${code}]`);
       const value = newLayout[lineNumber].split(' ')[keyNumber];
 
-      key.innerHTML = value;
-      if (isSymbolKey(key)) key.setAttribute('data-symbol', value);
+      const symbol = value.match(/.*\[.*\]$/)
+        ? value.split('[')[0]
+        : value;
+
+      const print = value.match(/.*\[.*\]$/)
+        ? value.split(/\[|\]/)[1]
+        : value;
+
+      key.innerHTML = print;
+      if (isSymbolKey(key)) key.setAttribute('data-symbol', symbol);
     });
   });
 
@@ -255,7 +263,7 @@ const Keyboard = ({ node, input }) => {
   createKeyboardDOM(state);
   setSizes(state);
   setLayout(state);
-  
+
   node.addEventListener('mousedown', (event) => {
     const target = event.target;
     if (isKeyNode(target)) keydown(state, target.dataset.code);
@@ -293,7 +301,5 @@ module.exports = Keyboard;
 // TODO: style keys using .scss file instead inline styles
 
 // TODO: process tuch events on keyboard
-
-// TODO: Fix: The space symbols should work correct.
 
 // TODO: Change layout on the shift key clicked
