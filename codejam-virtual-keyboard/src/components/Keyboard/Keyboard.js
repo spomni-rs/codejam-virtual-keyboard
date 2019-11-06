@@ -117,6 +117,7 @@ const setSizes = ({ node }) => {
 };
 
 /* Set keyboard layout and print its symbols on the keys.
+ * Save data about current layout in the sessionStorage.
  *
  * @param {object} - the keyboard instance state
  * @param {HTMLElement} state.node - Keyboard component mount point.
@@ -140,6 +141,8 @@ const setLayout = ({ node, hasShiftedLayout, currLayoutName }) => {
       if (isSymbolKey(key)) key.setAttribute('data-symbol', value);
     });
   });
+
+  sessionStorage.setItem('currLayoutName', currLayoutName);
 };
 
 /** Switch between defined keyboard layouts.
@@ -220,11 +223,13 @@ const keyup = (state, code) => {
  * @param {HTMLElement} opts.node - App mount point
  */
 const Keyboard = ({ node }) => {
+  const currLayoutName = sessionStorage.getItem('currLayoutName') || 'en-us';
+
   let state = { // eslint-disable-line prefer-const
     node,
-    hasShiftedLayout: false,
-    currLayoutName: 'en-us',
+    currLayoutName,
     layoutNames: Object.keys(layouts),
+    hasShiftedLayout: false,
   };
 
   createKeyboardDOM(state);
@@ -252,3 +257,5 @@ const Keyboard = ({ node }) => {
 };
 
 module.exports = Keyboard;
+
+// TODO: delegate the working with sessionStorage to the higher level component
