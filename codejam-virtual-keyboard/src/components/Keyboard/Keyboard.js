@@ -205,12 +205,14 @@ const keydown = ({ node, input }, code) => {
   if (key) {
     key.classList.add('active');
     
+    const { selectionStart, selectionEnd } = input;
+    
     if (isSymbolKey(key)) {
       const { symbol } = key.dataset;
-      const { selectionStart, selectionEnd } = input;
-    
       input.setRangeText(symbol, selectionStart, selectionEnd, 'end');
-    } 
+    } else if (code === 'Backspace') {
+      input.setRangeText('', selectionStart - 1, selectionEnd, 'end');
+    }
   }
 };
 
