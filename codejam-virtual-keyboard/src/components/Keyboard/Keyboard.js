@@ -16,7 +16,7 @@ const isSymbolKey = (key) => symbolKeyCodes.includes(key.dataset.code);
 /** Generate DOM structure for Keyboard component and insert it into the "node" element.
  * @param {HTMLElement} node - Keyboard component mount point.
 */
-const createKeyboardDOM = (node) => {
+const createKeyboardDOM = ({ node }) => {
   if (!node.classList.contains('keyboard')) {
     node.classList.add('keyboard');
   }
@@ -38,7 +38,7 @@ const createKeyboardDOM = (node) => {
 /** Calculate and set sizes of the DOM elements
  * @param {HTMLElement} node - Keyboard component mount point.
  */
-const setSizes = (node) => {
+const setSizes = ({ node }) => {
   const keyboardWidth = parseInt(getComputedStyle(node).width, 10);
   const keyHeight = keyboardWidth * 0.05;
   const keyGap = (keyboardWidth - keyHeight * 16) / 17;
@@ -189,7 +189,7 @@ const isAltPressed = ({ node }) => !!(
  */
 const keydown = ({ node }, code) => {
   const key = node.querySelector(`[data-code=${code}]`);
-  key.classList.add('active');
+  if (key) key.classList.add('active');
 };
 
 /** Remove the “active” class of the key node
@@ -212,7 +212,7 @@ const keyup = (state, code) => {
   }
 
   const key = node.querySelector(`[data-code=${code}]`);
-  key.classList.remove('active');
+  if (key) key.classList.remove('active');
 };
 
 /** Create the Keyboard component and attach it to the "node" option.
@@ -220,16 +220,15 @@ const keyup = (state, code) => {
  * @param {HTMLElement} opts.node - App mount point
  */
 const Keyboard = ({ node }) => {
-  createKeyboardDOM(node);
-  setSizes(node);
-
-  const state = {
+  let state = { // eslint-disable-line prefer-const
     node,
     hasShiftedLayout: false,
     currLayoutName: 'en-us',
     layoutNames: Object.keys(layouts),
   };
 
+  createKeyboardDOM(state);
+  setSizes(state);
   setLayout(state);
 
   /* TO DISCUSS: arrow function versus the bind() method
