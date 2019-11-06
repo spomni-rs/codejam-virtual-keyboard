@@ -2,57 +2,10 @@ require('./Keyboard.scss');
 
 const elementResizeEvent = require('element-resize-event');
 const createElement = require('../../js/lib/create-element');
-const layouts = require('./keyboard-layouts');
 
-const symbolKeyCodes = [
-  'Backquote',
-  'Digit1',
-  'Digit2',
-  'Digit3',
-  'Digit4',
-  'Digit5',
-  'Digit6',
-  'Digit7',
-  'Digit8',
-  'Digit9',
-  'Digit0',
-  'Minus',
-  'Equal',
-  'KeyQ',
-  'KeyW',
-  'KeyE',
-  'KeyR',
-  'KeyT',
-  'KeyY',
-  'KeyU',
-  'KeyI',
-  'KeyO',
-  'KeyP',
-  'BracketLeft',
-  'BracketRight',
-  'Backslash',
-  'KeyA',
-  'KeyS',
-  'KeyD',
-  'KeyF',
-  'KeyG',
-  'KeyH',
-  'KeyJ',
-  'KeyK',
-  'KeyL',
-  'Semicolon',
-  'Quote',
-  'KeyZ',
-  'KeyX',
-  'KeyC',
-  'KeyV',
-  'KeyB',
-  'KeyN',
-  'KeyM',
-  'Comma',
-  'Period',
-  'Slash',
-];
+const symbolKeyCodes = require('./keyboard-data/symbol-key-codes');
+const codeLayout = require('./keyboard-data/code-layout');
+const layouts = require('./keyboard-data/keyboard-layouts');
 
 /** Check if passed key node is key of symbol to typing.
  *
@@ -68,7 +21,7 @@ const createKeyboardDOM = (node) => {
     node.classList.add('keyboard');
   }
 
-  layouts.codes.forEach((lineStr) => {
+  codeLayout.forEach((lineStr) => {
     const line = createElement('div', 'keyboard__line');
     node.appendChild(line);
 
@@ -178,7 +131,7 @@ const setLayout = ({ node, isShiftPressed, layoutName }) => {
     ? layouts[layoutName][1]
     : layouts[layoutName][0];
 
-  layouts.codes.forEach((lineStr, lineNumber) => {
+  codeLayout.forEach((lineStr, lineNumber) => {
     lineStr.split(' ').forEach((code, keyNumber) => {
       const key = node.querySelector(`[data-code=${code}]`);
       const value = newLayout[lineNumber].split(' ')[keyNumber];
