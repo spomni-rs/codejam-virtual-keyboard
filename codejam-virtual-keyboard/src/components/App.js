@@ -1,7 +1,7 @@
 require('./App.scss');
 
 const createElement = require('../js/lib/create-element');
-const Keyboard = require('./Keyboard.js');
+const Keyboard = require('./Keyboard');
 
 /* BEM structure
   app

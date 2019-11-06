@@ -1,7 +1,7 @@
 require('./Keyboard.scss');
 
 const elementResizeEvent = require('element-resize-event');
-const createElement = require('../js/lib/create-element');
+const createElement = require('../../js/lib/create-element');
 const layouts = require('./keyboard-layouts');
 
 const symbolKeyCodes = [
