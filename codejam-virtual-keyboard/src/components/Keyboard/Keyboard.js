@@ -199,19 +199,27 @@ const isAltPressed = ({ node }) => !!(
  * @param {HTMLElement} state.node - Keyboard component mount point.
  * @param {string} code - key code
  */
-const keydown = ({ node, input }, code) => {
+const keydown = (state, code) => {
+  const { node, input } = state;
   const key = node.querySelector(`[data-code=${code}]`);
-  
+
   if (key) {
     key.classList.add('active');
-    
-    const { selectionStart, selectionEnd } = input;
-    
+
+    // this way make a bug on chrome !!!
+    // const { selectionStart, selectionEnd } = input;
+
+    const selectionStart = input.value.length;
+    const selectionEnd = selectionStart;
+
     if (isSymbolKey(key)) {
       const { symbol } = key.dataset;
       input.setRangeText(symbol, selectionStart, selectionEnd, 'end');
     } else if (code === 'Backspace') {
       input.setRangeText('', selectionStart - 1, selectionEnd, 'end');
+    } else if (isShiftPressed(state)) {
+      state.hasShiftedLayout = true; // eslint-disable-line no-param-reassign
+      setLayout(state);
     }
   }
 };
@@ -236,10 +244,20 @@ const keyup = (state, code) => {
   }
 
   const key = node.querySelector(`[data-code=${code}]`);
-  if (key) key.classList.remove('active');
+  if (key) {
+    key.classList.remove('active');
+
+    if (
+      (code === 'ShiftLeft' || code === 'ShiftRight')
+      && !isShiftPressed(state)
+    ) {
+      state.hasShiftedLayout = false; // eslint-disable-line no-param-reassign
+      setLayout(state);
+    }
+  }
 };
 
-/** Check if the passed HTMLElement is a keyboard key. 
+/** Check if the passed HTMLElement is a keyboard key.
  * @param {HTMLElement} duck - Node do check.
  *
  * @returns {boolean}
@@ -267,14 +285,14 @@ const Keyboard = ({ node, input }) => {
   setLayout(state);
 
   node.addEventListener('mousedown', (event) => {
-    const target = event.target;
+    const { target } = event;
     if (isKeyNode(target)) keydown(state, target.dataset.code);
-  })
-  
+  });
+
   node.addEventListener('mouseup', (event) => {
-    const target = event.target;
+    const { target } = event;
     if (isKeyNode(target)) keyup(state, target.dataset.code);
-  })
+  });
 
   /* TO DISCUSS: arrow function versus the bind() method
    * Dzmitry, I remember your desire to write like this:
@@ -304,4 +322,4 @@ module.exports = Keyboard;
 
 // TODO: process tuch events on keyboard
 
-// TODO: Change layout on the shift key clicked
+// TODO: Remove class "active" when mouse out from key.
