@@ -243,7 +243,7 @@ const Keyboard = ({ node }) => {
     *  But I think the way with the arrow function is more
     *    readable in this certain case.
     */
-  elementResizeEvent(node, () => setSizes(node));
+  elementResizeEvent(node, () => setSizes(state));
 
   return {
     /* TO DISCUSS: arrow function versus the bind() method
