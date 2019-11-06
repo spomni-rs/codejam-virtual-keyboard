@@ -1,4 +1,8 @@
 {
+  "dependencies": {
+    "element-resize-event": "^3.0.3",
+    "normalize.css": "^8.0.1"
+  },
   "devDependencies": {
     "css-loader": "^3.2.0",
     "del": "^5.1.0",
@@ -33,7 +37,6 @@
     "lint": "node node_modules/gulp/bin/gulp.js lint",
     "lint--fix": "node node_modules/gulp/bin/gulp.js lint--fix"
   },
-  "dependencies": {},
   "stylelint": {
     "extends": "stylelint-config-htmlacademy"
   }
