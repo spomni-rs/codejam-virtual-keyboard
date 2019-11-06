@@ -185,14 +185,25 @@ const isAltPressed = ({ node }) => !!(
 
 /** Set the “active” class of the key node
  * whose code is equal to the “code” property.
+ *  Print symbol into the state.input.
  *
  * @param {object} state - the keyboard instance state
  * @param {HTMLElement} state.node - Keyboard component mount point.
  * @param {string} code - key code
  */
-const keydown = ({ node }, code) => {
+const keydown = ({ node, input }, code) => {
   const key = node.querySelector(`[data-code=${code}]`);
-  if (key) key.classList.add('active');
+  
+  if (key) {
+    key.classList.add('active');
+    
+    if (isSymbolKey(key)) {
+      const { symbol } = key.dataset;
+      const { selectionStart, selectionEnd } = input;
+    
+      input.setRangeText(symbol, selectionStart, selectionEnd, 'end');
+    } 
+  }
 };
 
 /** Remove the “active” class of the key node
@@ -218,15 +229,24 @@ const keyup = (state, code) => {
   if (key) key.classList.remove('active');
 };
 
+/** Check if the passed HTMLElement is a keyboard key. 
+ * @param {HTMLElement} duck - Node do check.
+ *
+ * @returns {boolean}
+ */
+const isKeyNode = (duck) => duck.classList.contains('keyboard__key');
+
 /** Create the Keyboard component and attach it to the "node" option.
  * @param {object} opts
  * @param {HTMLElement} opts.node - App mount point
+ * @param {HTMLInputElement} opts.input - Input to print symbols.
  */
-const Keyboard = ({ node }) => {
+const Keyboard = ({ node, input }) => {
   const currLayoutName = sessionStorage.getItem('currLayoutName') || 'en-us';
 
   let state = { // eslint-disable-line prefer-const
     node,
+    input,
     currLayoutName,
     layoutNames: Object.keys(layouts),
     hasShiftedLayout: false,
@@ -235,22 +255,32 @@ const Keyboard = ({ node }) => {
   createKeyboardDOM(state);
   setSizes(state);
   setLayout(state);
+  
+  node.addEventListener('mousedown', (event) => {
+    const target = event.target;
+    if (isKeyNode(target)) keydown(state, target.dataset.code);
+  })
+  
+  node.addEventListener('mouseup', (event) => {
+    const target = event.target;
+    if (isKeyNode(target)) keyup(state, target.dataset.code);
+  })
 
   /* TO DISCUSS: arrow function versus the bind() method
-    * Dzmitry, I remember your desire to write like this:
-    *    elementResizeEvent(node, setSizes.bind(null, node));
-    *
-    *  But I think the way with the arrow function is more
-    *    readable in this certain case.
-    */
+   * Dzmitry, I remember your desire to write like this:
+   *    elementResizeEvent(node, setSizes.bind(null, node));
+   *
+   *  But I think the way with the arrow function is more
+   *    readable in this certain case.
+   */
   elementResizeEvent(node, () => setSizes(state));
 
   return {
     /* TO DISCUSS: arrow function versus the bind() method
-      * The method "keydown" and "keyup" was makes using diffrent ways
-      *   by design. Thus, we can see illustrative examples
-      *   of the discuss topic.
-      */
+     * The method "keydown" and "keyup" was makes using diffrent ways
+     *   by design. Thus, we can see illustrative examples
+     *   of the discuss topic.
+     */
     keydown: (code) => keydown(state, code),
     keyup: keyup.bind(null, state),
   };
@@ -259,3 +289,11 @@ const Keyboard = ({ node }) => {
 module.exports = Keyboard;
 
 // TODO: delegate the working with sessionStorage to the higher level component
+
+// TODO: style keys using .scss file instead inline styles
+
+// TODO: process tuch events on keyboard
+
+// TODO: Fix: The space symbols should work correct.
+
+// TODO: Change layout on the shift key clicked
