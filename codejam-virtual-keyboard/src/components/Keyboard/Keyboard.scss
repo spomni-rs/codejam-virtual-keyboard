@@ -1,0 +1,55 @@
+$keyboard-layer-color: silver;
+$keyboard-font-color: black;
+$keyboard-key-color: white;
+$keyboard-pressed-key-color: lightgreen;;
+$keyboard-key-symbol-color: darkblue;
+$keyboard-key-border-light: gray;
+$keyboard-key-border-dark: black;
+
+.keyboard {
+
+  font-family: "Arial", "Helvetica", sans-serif;
+  font-weight: bold;
+  color: $keyboard-font-color;
+
+  background-color: $keyboard-layer-color;
+
+  &__line {
+    font-size: 0;
+    display: flex;
+  }
+
+  &__key {
+    box-sizing: border-box;
+    border: 2px solid;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 4px;
+    border-color:
+      $keyboard-key-border-light
+      $keyboard-key-border-dark
+      $keyboard-key-border-dark
+      $keyboard-key-border-light;
+
+    background-color: $keyboard-key-color;
+
+    cursor: pointer;
+    user-select: none;
+
+    &[data-symbol] {
+      color: $keyboard-key-symbol-color;
+    }
+
+    &:active, &.active {
+      border-color:
+        $keyboard-key-border-dark
+        $keyboard-key-border-light
+        $keyboard-key-border-light
+        $keyboard-key-border-dark;
+
+      background-color: $keyboard-pressed-key-color;
+    }
+  }
+}
